@@ -1,0 +1,17 @@
+:root {
+  font-family: "Orbitron Variable", sans-serif;
+  --purple: #9a00f4;
+  --green: #00ff70;
+  --green2: #74ffb1;
+  --red: rgb(201, 11, 208);
+  --black: #262226;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+}
