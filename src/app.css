@@ -1,12 +1,21 @@
 :root {
-  font-family: "Orbitron Variable", sans-serif;
+  --light-purple: #d38ffa;
   --purple: #9a00f4;
   --green: #00ff70;
-  --green2: #74ffb1;
+  --light-green: #74ffb1;
   --red: rgb(201, 11, 208);
   --black: #262226;
+
+  font-family: "Orbitron Variable", sans-serif;
+
+  background: var(--black);
+  color: var(--light-green);
+  font-size: 20px;
 }
 
+* {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
 }
@@ -14,4 +23,40 @@ body {
 a {
   color: var(--green);
   text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  background: var(--green);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  transition: background 0.5s;
+
+  &:active {
+    background: var(--light-green);
+    transition: background 0s;
+  }
+
+  &.secondary {
+    background: var(--purple);
+    &:active {
+      background: var(--light-purple);
+    }
+  }
+}
+
+.stack {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: start;
+  gap: 1rem;
+}
+
+.vstack {
+  display: grid;
+  grid-auto-flow: row;
+  align-items: start;
+  gap: 1rem;
 }

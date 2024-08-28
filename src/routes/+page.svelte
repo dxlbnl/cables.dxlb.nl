@@ -1,5 +1,4 @@
 <script>
-  import "@fontsource-variable/orbitron";
   import Background from "$lib/Background.svelte";
 
   import QR from "$lib/QR.svelte";
@@ -27,7 +26,7 @@
           data={link}
           gradient={{
             type: "linear",
-            colors: ["var(--green)", "var(--green2)", "var(--green)"],
+            colors: ["var(--green)", "var(--light-green)", "var(--green)"],
           }}
           shapes={{
             body: "diamond",
@@ -49,13 +48,13 @@
   <section class="prices">
     <section class="card">
       <h2>30CM</h2>
-      <p>20 euro</p>
-      <p>3 for 50 euro!</p>
+      <p>€ 20,-</p>
+      <p>3 for € 50,-!</p>
     </section>
     <section class="card">
       <h2>15CM</h2>
-      <p>15 euro</p>
-      <p>3 for 40 euro!</p>
+      <p>€ 15,-</p>
+      <p>3 for € 40,-!</p>
     </section>
   </section>
 </main>
