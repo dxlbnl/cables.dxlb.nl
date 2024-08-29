@@ -20,17 +20,22 @@
 
   let hlines = $state(Array(20).fill({}));
   let vlines = $state(Array(20).fill({}));
-  let scale = 3;
-  let hspeed = 19300;
-  let vspeed = 20200;
+  let scale = 10;
+  let hspeed = 13720;
+  let vspeed = 17200;
 
   $effect(() => {
     hlines.forEach((line, i) => {
+      const pos = (time / hspeed) % 1;
+      let index = i + pos;
       line.x1 = -20;
-      line.y1 = Math.log(1 + i + Math.sin(time / hspeed + i) * 0.2) * scale;
+      line.y1 =
+        Math.log((1 + index + Math.sin(time / hspeed + index)) * 0.2) * scale;
       line.x2 = 20;
       line.y2 =
-        Math.log(1 + i + Math.cos(time / hspeed + i) * 0.2) * scale * 1.3;
+        Math.log((1 + index + Math.cos(time / hspeed + index)) * 0.2) *
+        scale *
+        1.3;
     });
     vlines.forEach((line, i) => {
       line.y1 = -100;

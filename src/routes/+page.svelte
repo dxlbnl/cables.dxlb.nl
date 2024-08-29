@@ -1,14 +1,32 @@
-<script>
+<script lang="ts">
   import Background from "$lib/Background.svelte";
+  import OrderComponent from "$lib/Order.svelte";
+  import Qr from "$lib/QR.svelte";
 
   import QR from "$lib/QR.svelte";
+  import { Size, type Order } from "$lib/types";
+  import Price from "./control/Price.svelte";
 
   const links = [
     ["cables.dxlb.nl", "https://cables.dxlb.nl"],
     ["@twinklepatchcables", "https://www.instagram.com/twinklepatchcables/"],
   ];
+
+  let order = $state<Order[]>([]);
+  let price = $state<number>(0);
+
+  $inspect({ order });
 </script>
 
+<svelte:window
+  onmessage={(event) => {
+    const data = JSON.parse(event.data);
+    console.log(data);
+    if (data.type === "order") {
+      order = data.order;
+    }
+  }}
+/>
 <Background />
 
 <main>
@@ -21,19 +39,7 @@
     </section>
     {#each links as [name, link]}
       <section>
-        <QR
-          width="8rem"
-          data={link}
-          gradient={{
-            type: "linear",
-            colors: ["var(--green)", "var(--light-green)", "var(--green)"],
-          }}
-          shapes={{
-            body: "diamond",
-            eyeball: "leaf",
-            eyeframe: "leaf",
-          }}
-        />
+        <QR width="8rem" data={link} />
         <a href={link}>{name}</a>
       </section>
     {/each}
@@ -57,13 +63,29 @@
       <p>3 for € 40,-!</p>
     </section>
   </section>
+
+  {#if order.length}
+    <section class="vstack">
+      <OrderComponent {order} />
+
+      <Price {order} bind:price />
+
+      {#if order.length}
+        {@const url = `https://bunq.me/twinklepatchcables/${price}/patchcables+${order
+          .map(({ size, amount }) => `${amount}x${Size[size]}`)
+          .join("+")}`}
+        <a href={url}>
+          <Qr data={url} />
+        </a>
+      {/if}
+    </section>
+  {/if}
 </main>
 
 <style>
   main {
     position: absolute;
     inset: 0;
-    color: var(--black);
 
     display: grid;
     grid-auto-flow: column;
@@ -77,6 +99,7 @@
       padding: 1rem;
       align-self: start;
       justify-self: end;
+      color: var(--black);
 
       .card {
         background: var(--green);

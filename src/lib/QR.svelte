@@ -13,5 +13,16 @@
 </script>
 
 {#if QRX}
-  <QRX {...props} />
+  <QRX
+    gradient={{
+      type: "linear",
+      colors: ["var(--green)", "var(--light-green)", "var(--green)"],
+    }}
+    shapes={{
+      body: "diamond",
+      eyeball: "leaf",
+      eyeframe: "leaf",
+    }}
+    {...props}
+  />
 {/if}

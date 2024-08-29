@@ -1,5 +1,6 @@
 <script lang="ts">
   import Numpad from "$lib/Numpad.svelte";
+  import OrderComponent from "$lib/Order.svelte";
   import Qr from "$lib/QR.svelte";
   import { Size, type Order } from "$lib/types";
   import Price from "./Price.svelte";
@@ -7,21 +8,15 @@
   let order = $state<Order[]>([]);
   let price = $state(0);
 
-  let w: WindowProxy;
+  let popup = $state<WindowProxy>();
   let number = $state(0);
 
   const open = () => {
-    w = window.open("/", "window", "popup")!;
-
-    w.addEventListener("load", () => {
-      const main = w.document.querySelector("main");
-      console.log("loaded");
-      console.log(main);
-      main!.requestFullscreen();
-    });
+    popup = window.open("/", "window", "popup")!;
+    popup.postMessage(JSON.stringify({ type: "init" }), "*");
   };
 
-  $effect(() => console.log(order));
+  $inspect({ popup });
   const addItem = (size: number) => {
     console.log($state.snapshot(order));
     const item = order.find((item) => item.size === size);
@@ -32,26 +27,20 @@
     }
     number = 0;
   };
-  console.log(Size);
+
+  const submit = () => {
+    if (!popup) return;
+    popup.postMessage(JSON.stringify({ type: "order", order }), "*");
+  };
+  const clear = () => {
+    order = [];
+    submit();
+  };
 </script>
 
 <main>
   {#if order}
-    <section class="order">
-      <h1>Order</h1>
-      {#each order as item, i}
-        <button
-          onclick={() => {
-            if (number > 0) {
-              item.amount = number;
-              number = 0;
-            }
-          }}
-        >
-          <p>{item.amount}x {Size[item.size]}</p>
-        </button>
-      {/each}
-    </section>
+    <OrderComponent {order} editable {number} />
   {/if}
 
   <section class="stack">
@@ -66,20 +55,8 @@
     <Numpad bind:number />
 
     <section class="vstack">
-      <Price {order} bind:price />
-
-      <button>Submit</button>
-      <button onclick={() => (order = [])}>Clear</button>
-
-      {#if order.length}
-        {@const url = `https://bunq.me/twinklepatchcables/${price}/${order
-          .map(({ size, amount }) => `${amount}x${Size[size]}`)
-          .join("+")}`}
-        <a href={url}>
-          <Qr data={url} />
-        </a>
-        />
-      {/if}
+      <button onclick={submit}>Submit</button>
+      <button onclick={clear}>Clear</button>
     </section>
   </section>
 
