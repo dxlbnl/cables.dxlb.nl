@@ -3,7 +3,11 @@
   import OrderComponent from "$lib/Order.svelte";
   import Qr from "$lib/QR.svelte";
   import { Size, type Order } from "$lib/types";
+  import { enhance } from "$app/forms";
   import Price from "./Price.svelte";
+  import type { ActionData } from "./$types";
+
+  let { form }: { form: ActionData } = $props();
 
   let order = $state<Order[]>([]);
   let price = $state(0);
@@ -16,7 +20,6 @@
     popup.postMessage(JSON.stringify({ type: "init" }), "*");
   };
 
-  $inspect({ popup });
   const addItem = (size: number) => {
     console.log($state.snapshot(order));
     const item = order.find((item) => item.size === size);
@@ -29,6 +32,10 @@
   };
 
   const submit = () => {
+    if (!popup) return;
+    popup.postMessage(JSON.stringify({ type: "order", order }), "*");
+  };
+  const paid = () => {
     if (!popup) return;
     popup.postMessage(JSON.stringify({ type: "order", order }), "*");
   };
@@ -55,7 +62,19 @@
     <Numpad bind:number />
 
     <section class="vstack">
-      <button onclick={submit}>Submit</button>
+      <Price {order} {price} />
+      <section class="stack">
+        <button onclick={submit}>Submit</button>
+
+        <form method="POST" use:enhance>
+          <input
+            type="hidden"
+            name="order"
+            value={JSON.stringify({ order, price })}
+          />
+          <button onclick={paid}>Paid</button>
+        </form>
+      </section>
       <button onclick={clear}>Clear</button>
     </section>
   </section>

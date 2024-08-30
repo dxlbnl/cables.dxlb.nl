@@ -28,3 +28,9 @@
     {/if}
   {/each}
 </section>
+
+<style>
+  h1 {
+    margin: 0;
+  }
+</style>

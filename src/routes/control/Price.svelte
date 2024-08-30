@@ -7,7 +7,6 @@
   const PRICES: Record<Size, Record<number, number>> = {
     [Size["15cm"]]: {
       1: 15,
-      3: 40,
     },
     [Size["30cm"]]: {
       1: 20,
@@ -18,11 +17,20 @@
   $effect(() => {
     price = order.reduce((sum, item) => {
       const PRICE = PRICES[item.size];
-      const price =
-        ((item.amount / 3) | 0) * PRICE[3] + (item.amount % 3) * PRICE[1];
+      const staffels = Object.keys(PRICE)
+        .map((s) => parseInt(s))
+        .sort()
+        .reverse();
+      let price = 0;
+      let amount = item.amount;
+      for (const count of staffels) {
+        price += Math.floor(amount / count) * PRICE[count];
+        amount %= count;
+        if (!amount) break;
+      }
       return sum + price;
     }, 0);
   });
 </script>
 
-<p>€ {price},-</p>
+€ {price},-

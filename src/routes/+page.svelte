@@ -14,8 +14,6 @@
 
   let order = $state<Order[]>([]);
   let price = $state<number>(0);
-
-  $inspect({ order });
 </script>
 
 <svelte:window
@@ -31,12 +29,12 @@
 
 <main>
   <section class="socials">
-    <section>
-      <p>Light up your patch!</p>
-      <p>Unique LED cables</p>
-      <p>Handmade with care in Delft</p>
-      <p>Many options and colors</p>
-    </section>
+    <ul>
+      <li>Light up your patch!</li>
+      <li>Unique LED cables</li>
+      <li>Handmade with care in Delft</li>
+      <li>Many options and colors</li>
+    </ul>
     {#each links as [name, link]}
       <section>
         <QR width="8rem" data={link} />
@@ -53,33 +51,43 @@
 
   <section class="prices">
     <section class="card">
+      <h2>15CM</h2>
+      <p>€ 15,-</p>
+    </section>
+    <section class="card">
       <h2>30CM</h2>
       <p>€ 20,-</p>
       <p>3 for € 50,-!</p>
     </section>
-    <section class="card">
-      <h2>15CM</h2>
-      <p>€ 15,-</p>
-      <p>3 for € 40,-!</p>
-    </section>
+
+    {#if order.length}
+      <section class="vstack card order">
+        <OrderComponent {order} />
+
+        <p>
+          Total:
+
+          <Price {order} bind:price />
+        </p>
+
+        <p>Scan for payment:</p>
+        {#if order.length}
+          {@const url = `https://bunq.me/twinklepatchcables/${price}/patchcables+${order
+            .map(({ size, amount }) => `${amount}x${Size[size]}`)
+            .join("+")}`}
+          <a href={url}>
+            <Qr
+              data={url}
+              gradient={{
+                type: "linear",
+                colors: ["var(--purple)", "var(--black)", "var(--purple)"],
+              }}
+            />
+          </a>
+        {/if}
+      </section>
+    {/if}
   </section>
-
-  {#if order.length}
-    <section class="vstack">
-      <OrderComponent {order} />
-
-      <Price {order} bind:price />
-
-      {#if order.length}
-        {@const url = `https://bunq.me/twinklepatchcables/${price}/patchcables+${order
-          .map(({ size, amount }) => `${amount}x${Size[size]}`)
-          .join("+")}`}
-        <a href={url}>
-          <Qr data={url} />
-        </a>
-      {/if}
-    </section>
-  {/if}
 </main>
 
 <style>
@@ -89,7 +97,8 @@
 
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: min-content auto 20ch;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: start;
     place-items: center;
 
     .prices {
@@ -118,6 +127,11 @@
     }
   }
 
+  .order {
+    h1 {
+      margin: 0;
+    }
+  }
   .socials {
     align-self: end;
     display: grid;
